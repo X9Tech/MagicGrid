@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicGridControls", "MagicGridControls\MagicGridControls.csproj", "{1626B61F-BF21-43BC-8199-37C7D1FF8A80}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GridSandboxApp", "GridSandboxApp\GridSandboxApp.csproj", "{7B944332-BEC0-47C4-9C3B-3A2EE48B5A39}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1626B61F-BF21-43BC-8199-37C7D1FF8A80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1626B61F-BF21-43BC-8199-37C7D1FF8A80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1626B61F-BF21-43BC-8199-37C7D1FF8A80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1626B61F-BF21-43BC-8199-37C7D1FF8A80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B944332-BEC0-47C4-9C3B-3A2EE48B5A39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B944332-BEC0-47C4-9C3B-3A2EE48B5A39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B944332-BEC0-47C4-9C3B-3A2EE48B5A39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B944332-BEC0-47C4-9C3B-3A2EE48B5A39}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

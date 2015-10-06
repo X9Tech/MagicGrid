@@ -1,0 +1,14 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GridSandboxApp"
+        xmlns:MagicGridControls="clr-namespace:MagicGridControls;assembly=MagicGridControls" x:Class="GridSandboxApp.MainWindow"
+        mc:Ignorable="d"
+        Title="Magic Grid Test Container" Height="614.865" Width="735.21" WindowState="Maximized">
+    <Grid>
+        <MagicGridControls:MagicGridLayout Name="layout"/>
+
+    </Grid>
+</Window>
