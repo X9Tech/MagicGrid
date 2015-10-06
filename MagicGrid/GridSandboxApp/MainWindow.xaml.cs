@@ -58,14 +58,34 @@ namespace GridSandboxApp
             }
 
             _grid1.ButtonSelected += OnFixtureButtonSelected;
+
+            foreach (var f in System.IO.Directory.GetFiles("C:\\SFX", "*.wav"))
+            {
+                var fInfo = new System.IO.FileInfo(f);
+                var sfxBtn = _grid3.AddButton(fInfo.Name);
+                sfxBtn.ActionInfo = fInfo;
+                sfxBtn.ButtonSelected += OnSfxButtonSelected;
+            }
+        }
+
+        private void OnSfxButtonSelected(MagicGridButton button, MagicGridControl parentGridControl)
+        {
+            System.IO.FileInfo fInfo = button.ActionInfo;
+            System.Media.SoundPlayer sp = new System.Media.SoundPlayer(fInfo.FullName);
+            sp.Play();
+            System.Threading.ThreadPool.QueueUserWorkItem(o =>
+            {
+                System.Threading.Thread.Sleep(1000);
+                this.Dispatcher.Invoke(new Action(() => { button.Unselect(); }));
+            });
         }
 
         private void OnFixtureButtonSelected(MagicGridButton button, MagicGridControl parentGridControl)
         {
             _grid1.Buttons.Where(b => b != button).ToList().ForEach(b => b.Unselect());
             _grid2.ClearButtons();
-            _grid3.ClearButtons();
-            _grid4.ClearButtons();
+            //_grid3.ClearButtons();
+            //_grid4.ClearButtons();
 
             _grid2.Title = "Intensity";
             

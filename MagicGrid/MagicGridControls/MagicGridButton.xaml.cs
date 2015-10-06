@@ -29,6 +29,7 @@ namespace MagicGridControls
         public MagicGridButton()
         {
             InitializeComponent();
+            Selectable = true;
             Unselect();
         }
 
@@ -51,6 +52,8 @@ namespace MagicGridControls
 
         private void Select(bool fireEvents)
         {
+            if (!Selectable) { return; }
+
             if (ButtonSelected != null && fireEvents == true) { ButtonSelected(this, ParentGridControl); }
             grid.Background = Brushes.DarkGray;
         }
@@ -71,5 +74,9 @@ namespace MagicGridControls
             get { return txtButtonText.Text; }
             set { txtButtonText.Text = value; }
         }
+
+        public bool Selectable { get; set; }
+        public bool IsPlaceholderButton { get; set; }
+        public dynamic ActionInfo { get; set; }
     }
 }

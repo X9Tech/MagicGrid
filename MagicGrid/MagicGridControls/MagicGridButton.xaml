@@ -12,7 +12,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <TextBlock Name="txtButtonText" Text="Button Text" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"></TextBlock>
+            <TextBlock Name="txtButtonText" Text="Button Text" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow"></TextBlock>
         </Grid>
     </Border>
 </UserControl>
