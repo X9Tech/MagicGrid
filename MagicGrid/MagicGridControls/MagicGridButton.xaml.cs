@@ -24,6 +24,8 @@ namespace MagicGridControls
     {
         public event ButtonSelectionEvent ButtonSelected;
         public event ButtonSelectionEvent ButtonUnselected;
+        
+        public bool? AutoUnselectOnTouch { get; set; }
 
 
         public MagicGridButton()
@@ -34,6 +36,12 @@ namespace MagicGridControls
         }
 
         internal MagicGridControl ParentGridControl { get; set; }
+
+        private bool _isSelected { get; set; }
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+        }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -54,6 +62,19 @@ namespace MagicGridControls
         {
             if (!Selectable) { return; }
 
+            bool parentUnselectOnTouch = false;
+            if (ParentGridControl != null)
+            {
+                parentUnselectOnTouch = ParentGridControl.AutoUnselectOnTouch;
+            }
+
+            if (IsSelected && AutoUnselectOnTouch.GetValueOrDefault(parentUnselectOnTouch))
+            {
+                Unselect(true);
+                return;
+            }
+
+            _isSelected = true;
             if (ButtonSelected != null && fireEvents == true) { ButtonSelected(this, ParentGridControl); }
             grid.Background = Brushes.DarkGray;
         }
@@ -65,6 +86,7 @@ namespace MagicGridControls
 
         public void Unselect(bool fireEvents)
         {
+            _isSelected = false;
             if (ButtonUnselected != null && fireEvents == true) { ButtonUnselected(this, ParentGridControl); }
             grid.Background = Brushes.WhiteSmoke;
         }

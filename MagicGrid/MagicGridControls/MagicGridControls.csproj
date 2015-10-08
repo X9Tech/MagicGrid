@@ -69,6 +69,7 @@
     <Compile Include="MagicGridButton.xaml.cs">
       <DependentUpon>MagicGridButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MagicGridButtonCanvasPlaceholder.cs" />
     <Compile Include="MagicGridControl.xaml.cs">
       <DependentUpon>MagicGridControl.xaml</DependentUpon>
     </Compile>

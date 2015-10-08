@@ -49,7 +49,9 @@ namespace GridSandboxApp
             _grid3 = grids[2];
             _grid4 = grids[3];
 
+            _grid1.OnlyAllowSingleSelection = true;
             grids.ForEach(g => g.ClearButtons());
+            grids.ForEach(g => g.AutoUnselectOnTouch = true);
 
             _grid1.Title = "Fixtures";
             for (int i = 1; i < 20; i++)
@@ -82,7 +84,7 @@ namespace GridSandboxApp
 
         private void OnFixtureButtonSelected(MagicGridButton button, MagicGridControl parentGridControl)
         {
-            _grid1.Buttons.Where(b => b != button).ToList().ForEach(b => b.Unselect());
+            //_grid1.Buttons.Where(b => b != button).ToList().ForEach(b => b.Unselect());
             _grid2.ClearButtons();
             //_grid3.ClearButtons();
             //_grid4.ClearButtons();
