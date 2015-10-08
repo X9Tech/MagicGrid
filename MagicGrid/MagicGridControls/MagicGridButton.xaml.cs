@@ -78,5 +78,11 @@ namespace MagicGridControls
         public bool Selectable { get; set; }
         public bool IsPlaceholderButton { get; set; }
         public dynamic ActionInfo { get; set; }
+
+        public string IndexLabelText
+        {
+            get { return lblButtonIndex.Content.ToString(); }
+            set { lblButtonIndex.Content = value; }
+        }
     }
 }

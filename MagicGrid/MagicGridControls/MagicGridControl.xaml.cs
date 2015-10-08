@@ -27,7 +27,10 @@ namespace MagicGridControls
         {
             InitializeComponent();
             this.DataContext = this;
+            ShowButtonIndexes = true;
         }
+
+        public bool ShowButtonIndexes { get; set; }
 
         public void UnselectAll()
         {
@@ -91,6 +94,8 @@ namespace MagicGridControls
             button.ButtonSelected += OnChildButtonSelected;
             button.ButtonUnselected += OnChildButtonUnselected;
 
+            string labelIndex = string.Empty;
+
             var phb = wrap.Children.Cast<MagicGridButton>().FirstOrDefault(b => b.IsPlaceholderButton);
             if (phb != null && replacePlaceholder == true)
             {
@@ -102,6 +107,15 @@ namespace MagicGridControls
             {
                 wrap.Children.Add(button);
             }
+
+            labelIndex = (wrap.Children.IndexOf(button)+1).ToString();
+            
+            if (!ShowButtonIndexes)
+            {
+                labelIndex = string.Empty;
+            }
+
+            button.IndexLabelText = labelIndex.ToString();
 
             return button;
         }

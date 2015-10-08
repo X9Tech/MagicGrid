@@ -12,7 +12,10 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <TextBlock Name="txtButtonText" Text="Button Text" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow"></TextBlock>
+            <TextBlock Name="txtButtonText" Text="Button Text" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow" FontFamily="Arial" FontSize="10.667"></TextBlock>
+            <Grid Grid.ColumnSpan="2">
+                <Label Content="1" Name="lblButtonIndex" Foreground="#FFB4AEAE" FontFamily="Arial" FontSize="10.667" FontWeight="Bold"></Label>
+            </Grid>
         </Grid>
     </Border>
 </UserControl>
