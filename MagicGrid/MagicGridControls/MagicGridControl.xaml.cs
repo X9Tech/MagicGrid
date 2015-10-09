@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ namespace MagicGridControls
         public int Pages { get; set; }
         public int CurrentPage { get; set; }
 
-        private int _phCount = 50;
+        private int _phCount = 0;
         public int PlaceholderCount
         {
             get
@@ -138,19 +139,32 @@ namespace MagicGridControls
             }
         }
 
+        private void DLog(string msg)
+        {
+            if (Debugger.IsAttached )
+            {
+                Debug.WriteLine(msg);
+            }
+        }
+
         public void ClearButtons()
         {
-            _buttons.Clear();
+            DLog("Clearing buttons");
+            this.Dispatcher.Invoke((Action)(() => {
+                _buttons.Clear();
+                DLog("Cleared buttons, adding " + PlaceholderCount.ToString() + " placeholders");
 
-            for (int i = 0; i < PlaceholderCount; i++)
-            {
-                var b = AddButton(string.Empty, false);
-                b.Selectable = false;
-                b.IsPlaceholderButton = true;
-            }
+                for (int i = 0; i < PlaceholderCount; i++)
+                {
+                    var b = AddButton(string.Empty, false);
+                    b.Selectable = false;
+                    b.IsPlaceholderButton = true;
+                }
+                DLog("Placeholders added");
 
-            _queueReloadButtons = true;
-            //ReloadButtonsCanvas();
+                _queueReloadButtons = true;
+            }));
+           
         }
 
         public MagicGridButton AddButton(string text)
@@ -172,6 +186,7 @@ namespace MagicGridControls
 
         internal MagicGridButton AddButton(MagicGridButton button, bool replacePlaceholder)
         {
+            DLog("Adding button " + (button.Text ?? "(null title)"));
             button.ParentGridControl = this;
 
             button.ButtonSelected += OnChildButtonSelected;
@@ -200,6 +215,9 @@ namespace MagicGridControls
 
             button.IndexLabelText = labelIndex.ToString();
 
+            DLog("Button added, calling reload canvas");
+            //_queueReloadButtons = true;
+            ReloadButtonsCanvas();
             return button;
         }
 
@@ -224,11 +242,17 @@ namespace MagicGridControls
         private void ReloadButtonsCanvas()
         {
             _queueReloadButtons = false;
+            DLog("Reloading buttons canvas, buttons count = " + _buttons.Count.ToString());
             int startingPageButtonIndex = GridSlotsPerPage * CurrentPage;
             this.txtPageText.Text = "Page " + (CurrentPage + 1).ToString();
 
             for (int i = 0; i < _slotPlaceholders.Count; i++)
             {
+                if (_slotPlaceholders[i].IsActive == false)
+                {
+                    continue;
+                }
+
                 int btnIndex = i + startingPageButtonIndex;
                 if (btnIndex < _buttons.Count)
                 {
@@ -261,7 +285,7 @@ namespace MagicGridControls
         private void ResizeGrid()
         {
             _queueResize = false;
-
+            DLog("Resizing grid");
             gridPaging.Visibility = (EnablePaging ? Visibility.Visible : Visibility.Collapsed);
 
             double canvasWidth = canvasButtons.ActualWidth;
@@ -343,7 +367,7 @@ namespace MagicGridControls
 
             if (_slotPlaceholders.Count != numExistingSlots)
             {
-                ReloadButtonsCanvas();
+                _queueReloadButtons = true;
             }
         }
 

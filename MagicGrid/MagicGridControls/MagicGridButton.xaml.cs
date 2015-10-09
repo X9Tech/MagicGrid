@@ -117,5 +117,18 @@ namespace MagicGridControls
             get { return lblButtonIndex.Content.ToString(); }
             set { lblButtonIndex.Content = value; }
         }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Button ");
+            if (IsPlaceholderButton)
+            {
+                sb.Append("Placeholder ");
+            }
+
+            sb.Append(this.Text ?? "(no text)");
+            return sb.ToString();
+        }
     }
 }
