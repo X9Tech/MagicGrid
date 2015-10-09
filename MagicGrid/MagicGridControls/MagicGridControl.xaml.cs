@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace MagicGridControls
 {
@@ -26,6 +27,32 @@ namespace MagicGridControls
 
         public bool OnlyAllowSingleSelection { get; set; }
         public bool AutoUnselectOnTouch { get; set; }
+        internal int GridSlotsPerPage { get; private set; }
+
+        DispatcherTimer _resizeTimer = null;
+        private bool _queueResize = true;
+        private bool _queueReloadButtons = true;
+
+        public bool EnablePaging { get; set; }
+        public int Pages { get; set; }
+        public int CurrentPage { get; set; }
+
+        private int _phCount = 50;
+        public int PlaceholderCount
+        {
+            get
+            {
+                return _phCount;
+            }
+            set
+            {
+                _phCount = value;
+                _queueResize = true;
+            }
+        }
+
+        public double MinimumButtonWidth { get; set; }
+        public double MinimumButtonHeight { get; set; }
 
         public MagicGridControl()
         {
@@ -34,16 +61,49 @@ namespace MagicGridControls
             ShowButtonIndexes = true;
             _buttons.CollectionChanged += OnButtonsCollectionChanged;
             this.SizeChanged += OnSizeChanged;
+            this.LayoutUpdated += OnLayoutUpdated;
+            this.Loaded += OnLoaded;
+
+            txtPageText.Text = "Page " + (CurrentPage + 1).ToString();
+
+            MinimumButtonHeight = 80;
+            MinimumButtonWidth = 100;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            _resizeTimer = new DispatcherTimer();
+            _resizeTimer.Interval = TimeSpan.FromMilliseconds(100);
+            _resizeTimer.IsEnabled = true;
+            _resizeTimer.Tick += OnResizeTimerTick;
+        }
+
+        private void OnResizeTimerTick(object sender, EventArgs e)
+        {
+            if (_queueResize)
+            {
+                ResizeGrid();
+            }
+
+            if (_queueReloadButtons)
+            {
+                ReloadButtonsCanvas();
+            }
+        }
+
+        private void OnLayoutUpdated(object sender, EventArgs e)
+        {
+            //_queueResize = true;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ResizeGrid();
+            _queueResize = true;
         }
 
         private void OnButtonsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            
+            _queueReloadButtons = true;
         }
 
         // List<MagicGridButton> _buttons = new List<MagicGridButton>();
@@ -82,14 +142,15 @@ namespace MagicGridControls
         {
             _buttons.Clear();
 
-            for (int i = 0; i < 42; i++)
+            for (int i = 0; i < PlaceholderCount; i++)
             {
                 var b = AddButton(string.Empty, false);
                 b.Selectable = false;
                 b.IsPlaceholderButton = true;
             }
 
-            ReloadButtonsCanvas();
+            _queueReloadButtons = true;
+            //ReloadButtonsCanvas();
         }
 
         public MagicGridButton AddButton(string text)
@@ -139,8 +200,6 @@ namespace MagicGridControls
 
             button.IndexLabelText = labelIndex.ToString();
 
-            ReloadButtonsCanvas();
-
             return button;
         }
 
@@ -164,13 +223,18 @@ namespace MagicGridControls
 
         private void ReloadButtonsCanvas()
         {
+            _queueReloadButtons = false;
+            int startingPageButtonIndex = GridSlotsPerPage * CurrentPage;
+            this.txtPageText.Text = "Page " + (CurrentPage + 1).ToString();
+
             for (int i = 0; i < _slotPlaceholders.Count; i++)
             {
-                if (i < _buttons.Count)
+                int btnIndex = i + startingPageButtonIndex;
+                if (btnIndex < _buttons.Count)
                 {
-                    if (_buttons[i].Parent != null)
+                    if (_buttons[btnIndex].Parent != null)
                     {
-                        MagicGridButtonCanvasPlaceholder existingParent = _buttons[i].Parent as MagicGridButtonCanvasPlaceholder;
+                        MagicGridButtonCanvasPlaceholder existingParent = _buttons[btnIndex].Parent as MagicGridButtonCanvasPlaceholder;
                         if (existingParent != null)
                         {
                             if (existingParent != _slotPlaceholders[i])
@@ -183,9 +247,9 @@ namespace MagicGridControls
                         }
                     }
 
-                    _slotPlaceholders[i].Child = _buttons[i];
-                    _buttons[i].Width = double.NaN;
-                    _buttons[i].Height = double.NaN;
+                    _slotPlaceholders[i].Child = _buttons[btnIndex];
+                    _buttons[btnIndex].Width = double.NaN;
+                    _buttons[btnIndex].Height = double.NaN;
                 } else
                 {
                     _slotPlaceholders[i].Child = null;
@@ -196,18 +260,25 @@ namespace MagicGridControls
 
         private void ResizeGrid()
         {
+            _queueResize = false;
+
+            gridPaging.Visibility = (EnablePaging ? Visibility.Visible : Visibility.Collapsed);
+
             double canvasWidth = canvasButtons.ActualWidth;
             double canvasHeight = canvasButtons.ActualHeight;
             int numExistingSlots = _slotPlaceholders.Count;
 
-            double minButtonWidth = 100;
+            double minButtonWidth = MinimumButtonWidth;
+            if (minButtonWidth < 10) { minButtonWidth = 10; }
+
             int buttonsPerRow = Convert.ToInt32(System.Math.Floor(canvasWidth / minButtonWidth));
-
             double buttonWidth = (canvasWidth / Convert.ToDouble(buttonsPerRow));
-            double buttonHeight = 80;
+            double buttonHeight = MinimumButtonHeight;
 
-            canvasButtons.Children.Clear();
-            _slotPlaceholders.Clear();
+            if (buttonHeight < 10) { buttonHeight = 10; }
+
+            int rowsPerPage = (Convert.ToInt32(System.Math.Floor(canvasHeight / buttonHeight)));
+            GridSlotsPerPage = buttonsPerRow * rowsPerPage;
 
             double currentTop = 0;
             double currentLeft = 0;
@@ -215,6 +286,9 @@ namespace MagicGridControls
             int col = 0;
             int index = 0;
             bool gridFull = false;
+
+            List<MagicGridButtonCanvasPlaceholder> unusedPlaceholders = new List<MagicGridButtonCanvasPlaceholder>();
+            unusedPlaceholders.AddRange(_slotPlaceholders);
 
             while (!gridFull)
             {
@@ -233,18 +307,26 @@ namespace MagicGridControls
                     break;
                 }
 
-                MagicGridButtonCanvasPlaceholder ph = new MagicGridButtonCanvasPlaceholder();
+                MagicGridButtonCanvasPlaceholder ph = null;
+                ph = _slotPlaceholders.FirstOrDefault(sp => sp.MagicGridSlotIndex == index);
+
+                if (ph == null)
+                { 
+                    ph = new MagicGridButtonCanvasPlaceholder();
+                    ph.MagicGridSlotIndex = index;
+                    canvasButtons.Children.Add(ph);
+                    _slotPlaceholders.Add(ph);
+                } else
+                {
+                    unusedPlaceholders.Remove(ph);
+                }
+
+                ph.Visibility = Visibility.Visible;
+                ph.IsActive = true;
                 ph.MagicGridRow = row;
                 ph.MagicGridColumn = col;
-                ph.MagicGridSlotIndex = index;
-
-                canvasButtons.Children.Add(ph);
-                _slotPlaceholders.Add(ph);
                 ph.Width = buttonWidth;
                 ph.Height = buttonHeight;
-                //ph.Background = Brushes.Yellow;
-                //ph.BorderThickness = new Thickness(2);
-                //ph.BorderBrush = Brushes.Red;
                 Canvas.SetTop(ph, currentTop);
                 Canvas.SetLeft(ph, currentLeft);
 
@@ -253,10 +335,41 @@ namespace MagicGridControls
                 col += 1;
             }
 
+            foreach (var p in unusedPlaceholders)
+            {
+                p.Visibility = Visibility.Collapsed;
+                p.IsActive = false;
+            }
+
             if (_slotPlaceholders.Count != numExistingSlots)
             {
                 ReloadButtonsCanvas();
             }
+        }
+
+        public void PageForward()
+        {
+            CurrentPage += 1;
+            _queueReloadButtons = true;
+        }
+
+        public void PageBack()
+        {
+            if (CurrentPage > 0)
+            {
+                CurrentPage -= 1;
+                _queueReloadButtons = true;
+            }
+        }
+
+        private void btnPageBack_Click(object sender, RoutedEventArgs e)
+        {
+            PageBack();
+        }
+
+        private void btnPageForward_Click(object sender, RoutedEventArgs e)
+        {
+            PageForward();
         }
     }
 }

@@ -52,6 +52,8 @@ namespace GridSandboxApp
             _grid1.OnlyAllowSingleSelection = true;
             grids.ForEach(g => g.ClearButtons());
             grids.ForEach(g => g.AutoUnselectOnTouch = true);
+            grids.ForEach(g => g.EnablePaging = true);
+            grids.ForEach(g => g.PlaceholderCount = 100);
 
             _grid1.Title = "Fixtures";
             for (int i = 1; i < 20; i++)
@@ -60,6 +62,7 @@ namespace GridSandboxApp
             }
 
             _grid1.ButtonSelected += OnFixtureButtonSelected;
+            _grid1.ButtonUnselected += OnFixtureButtonUnselected;
 
             foreach (var f in System.IO.Directory.GetFiles("C:\\SFX", "*.wav"))
             {
@@ -68,6 +71,11 @@ namespace GridSandboxApp
                 sfxBtn.ActionInfo = fInfo;
                 sfxBtn.ButtonSelected += OnSfxButtonSelected;
             }
+        }
+
+        private void OnFixtureButtonUnselected(MagicGridButton button, MagicGridControl parentGridControl)
+        {
+            
         }
 
         private void OnSfxButtonSelected(MagicGridButton button, MagicGridControl parentGridControl)

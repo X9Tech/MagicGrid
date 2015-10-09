@@ -12,5 +12,6 @@ namespace MagicGridControls
         internal int MagicGridSlotIndex { get; set; }
         internal int MagicGridRow { get; set; }
         internal int MagicGridColumn { get; set; }
+        public bool IsActive { get; set; }
     }
 }
