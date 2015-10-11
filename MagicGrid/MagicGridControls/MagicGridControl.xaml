@@ -15,7 +15,7 @@
             <TextBlock Name="panelTitle" Foreground="White" Text="{Binding Title}">TITLE</TextBlock>
         </Border>
         <Canvas Name="canvasButtons" Grid.Row="1" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"></Canvas>
-        <Grid x:Name="gridPaging" Grid.Row="2" Height="45" Background="#FF0F0293">
+        <Grid x:Name="gridPaging" Grid.Row="2" Height="45">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="99*"/>
                 <ColumnDefinition Width="428*"/>

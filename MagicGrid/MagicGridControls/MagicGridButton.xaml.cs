@@ -33,7 +33,7 @@ namespace MagicGridControls
             InitializeComponent();
             Selectable = true;
             Unselect();
-            AutoUnselectAfterMilliseconds = 500;
+            AutoUnselectAfterMilliseconds = 50;
         }
 
         DateTime? _lastSelected = null;
@@ -55,12 +55,12 @@ namespace MagicGridControls
             //Select();
         }
 
-        private void Select()
+        public void Select()
         {
             Select(true);
         }
 
-        private void Select(bool fireEvents)
+        public void Select(bool fireEvents)
         {
             if (!Selectable) { return; }
 
@@ -87,7 +87,8 @@ namespace MagicGridControls
             _isSelected = true;
             _lastSelected = DateTime.Now;
             if (ButtonSelected != null && fireEvents == true) { ButtonSelected(this, ParentGridControl); }
-            grid.Background = Brushes.DarkGray;
+            grid.Background = Brushes.Orange;
+            this.Foreground = Brushes.Black;
         }
 
         public void Unselect()
@@ -99,7 +100,8 @@ namespace MagicGridControls
         {
             _isSelected = false;
             if (ButtonUnselected != null && fireEvents == true) { ButtonUnselected(this, ParentGridControl); }
-            grid.Background = Brushes.WhiteSmoke;
+            grid.Background = Brushes.Black;
+            this.Foreground = Brushes.White;
         }
 
         public string Text
@@ -111,6 +113,16 @@ namespace MagicGridControls
         public bool Selectable { get; set; }
         public bool IsPlaceholderButton { get; set; }
         public dynamic ActionInfo { get; set; }
+
+        public int? CurrentMagicGridSlotIndex
+        {
+            get
+            {
+                var parentPh = this.Parent as MagicGridButtonCanvasPlaceholder;
+                if (parentPh == null) { return null; }
+                return parentPh.MagicGridSlotIndex;
+            }
+        }
 
         public string IndexLabelText
         {
