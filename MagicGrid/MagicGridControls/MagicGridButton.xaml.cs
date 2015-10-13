@@ -33,7 +33,7 @@ namespace MagicGridControls
             InitializeComponent();
             Selectable = true;
             Unselect();
-            AutoUnselectAfterMilliseconds = 50;
+            AutoUnselectAfterMilliseconds = 0;
         }
 
         DateTime? _lastSelected = null;
