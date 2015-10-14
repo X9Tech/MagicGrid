@@ -27,6 +27,10 @@ namespace MagicGridControls
         
         public bool? AutoUnselectOnTouch { get; set; }
         private int AutoUnselectAfterMilliseconds { get; set; }
+        public Brush UnselectedBackground { get; set; }
+        public Brush UnselectedForeground { get; set; }
+        public Brush SelectedBackground { get; set; }
+        public Brush SelectedForeground { get; set; }
 
         public MagicGridButton()
         {
@@ -34,6 +38,11 @@ namespace MagicGridControls
             Selectable = true;
             Unselect();
             AutoUnselectAfterMilliseconds = 0;
+
+            UnselectedBackground = Brushes.Black;
+            UnselectedForeground = Brushes.White;
+            SelectedBackground = Brushes.Orange;
+            SelectedForeground = Brushes.Black;
         }
 
         DateTime? _lastSelected = null;
@@ -87,8 +96,8 @@ namespace MagicGridControls
             _isSelected = true;
             _lastSelected = DateTime.Now;
             if (ButtonSelected != null && fireEvents == true) { ButtonSelected(this, ParentGridControl); }
-            grid.Background = Brushes.Orange;
-            this.Foreground = Brushes.Black;
+            grid.Background = SelectedBackground;
+            this.Foreground = SelectedForeground;
         }
 
         public void Unselect()
@@ -100,8 +109,8 @@ namespace MagicGridControls
         {
             _isSelected = false;
             if (ButtonUnselected != null && fireEvents == true) { ButtonUnselected(this, ParentGridControl); }
-            grid.Background = Brushes.Black;
-            this.Foreground = Brushes.White;
+            grid.Background = UnselectedBackground;
+            this.Foreground = UnselectedForeground;
         }
 
         public string Text

@@ -59,6 +59,11 @@ namespace MagicGridControls
         public double MinimumButtonWidth { get; set; }
         public double MinimumButtonHeight { get; set; }
 
+        public Brush UnselectedBackground { get; set; }
+        public Brush UnselectedForeground { get; set; }
+        public Brush SelectedBackground { get; set; }
+        public Brush SelectedForeground { get; set; }
+
         public MagicGridControl()
         {
             InitializeComponent();
@@ -74,6 +79,11 @@ namespace MagicGridControls
             MinimumButtonHeight = 80;
             MinimumButtonWidth = 100;
             CurrentPage = 0;
+
+            UnselectedBackground = Brushes.Black;
+            UnselectedForeground = Brushes.White;
+            SelectedBackground = Brushes.Orange;
+            SelectedForeground = Brushes.Black;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -239,7 +249,20 @@ namespace MagicGridControls
 
             button.IndexLabelText = labelIndex.ToString();
 
-            DLog("Button added");
+            button.SelectedBackground = SelectedBackground;
+            button.SelectedForeground = SelectedForeground;
+            button.UnselectedBackground = UnselectedBackground;
+            button.UnselectedForeground = UnselectedForeground;
+
+            if (button.IsSelected)
+            {
+                button.Select(false);
+            } else
+            {
+                button.Unselect(false);
+            }
+
+            //DLog("Button added");
 
             _buttons.Add(button);
             //_queueReloadButtons = true;
